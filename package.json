@@ -1,11 +1,18 @@
 {
-  "name": "@koats/router",
+  "name": "@koa-ts/router",
   "version": "0.0.1",
-  "private": true,
+  "author": "VladDotH",
+  "license": "MIT",
+  "description": "Type-safe middlewares for koa router",
+  "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/koa-ts/router.git"
+    "url": "git+https://github.com/koa-ts/router.git"
   },
+  "bugs": {
+    "url": "https://github.com/koa-ts/router/issues"
+  },
+  "homepage": "https://github.com/koa-ts/router#readme",
   "scripts": {
     "bun-dev": "bun --hot dev/app.ts",
     "ts-dev": "tsc --watch --noEmit --preserveWatchOutput",
@@ -43,5 +50,8 @@
     "dist/*.d.ts"
   ],
   "main": "dist/index.js",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  }
 }
