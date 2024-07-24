@@ -9,7 +9,7 @@ import {
   MethodsArray,
 } from './core';
 import { createRouteHandler, RouteHandler } from './route-handler';
-import { isFunction } from 'lodash';
+import * as _ from 'lodash-es';
 
 /**
  * Interface for functions that create route handlers in router (get, put, post, delete, etc.)
@@ -129,8 +129,8 @@ export type Router<
      * Registred handlers
      */
     readonly routeHandlers: RouteHandler<
-      unknown,
-      unknown,
+      string,
+      MethodsType,
       Prefix,
       unknown,
       State
@@ -205,7 +205,7 @@ export function createRouter<
 
     routeHandlers: [],
 
-    ...Object.fromEntries(
+    ..._.fromPairs(
       (opts?.methods ?? MethodsArray).map((method: MethodsType) => [
         method,
         function (path: string, name?: string, mw?: Middleware) {
@@ -226,7 +226,7 @@ export function createRouter<
           Reflect.defineMetadata(key, Reflect.getMetadata(key, mw), this),
         );
       }
-      if (!Reflect.getMetadata(MetaKeys.metaOnly, mw) && isFunction(mw)) {
+      if (!Reflect.getMetadata(MetaKeys.metaOnly, mw) && _.isFunction(mw)) {
         this.koaRouter.use(toKoaMiddleware(mw));
       }
 

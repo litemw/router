@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import KoaRouter from 'koa-router';
-import { once } from 'lodash';
+import * as _ from 'lodash-es';
 
 /**
  * Merge object types rewriting properties of first one
@@ -84,7 +84,7 @@ export type MiddlewareOrMeta<State = unknown, Return = unknown> =
  */
 export function toKoaMiddleware(mw: Middleware): KoaRouter.IMiddleware {
   return async (ctx, next) => {
-    next = once(next);
+    next = _.once(next);
     const res = await mw(ctx, next);
     Object.assign(ctx.state, res);
     return next();
@@ -99,4 +99,4 @@ export const MetaKeys = {
   ignoreMeta: 'ignore-meta',
 };
 
-export const MetaKeyValues = Object.values(MetaKeys);
+export const MetaKeyValues = _.values(MetaKeys);

@@ -8,7 +8,7 @@ import {
   MetaKeyValues,
 } from './core';
 import 'reflect-metadata';
-import { isFunction } from 'lodash';
+import * as _ from 'lodash-es';
 
 /**
  * Type of route handler, it can chain middlewares with `use` method
@@ -92,7 +92,7 @@ export function createRouteHandler<
             Reflect.defineMetadata(key, Reflect.getMetadata(key, mw), this),
           );
       }
-      if (!Reflect.getMetadata(MetaKeys.metaOnly, mw) && isFunction(mw)) {
+      if (!Reflect.getMetadata(MetaKeys.metaOnly, mw) && _.isFunction(mw)) {
         if (name) {
           this.router.koaRouter[method](name, path, toKoaMiddleware(mw));
         } else {
