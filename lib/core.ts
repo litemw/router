@@ -1,6 +1,8 @@
 import Koa from 'koa';
 import KoaRouter from 'koa-router';
 import * as _ from 'lodash-es';
+import { RouteHandler } from './route-handler';
+import { Router } from './router';
 
 /**
  * Merge object types rewriting properties of first one
@@ -54,7 +56,7 @@ export const MethodsArray = [
 ];
 
 /**
- * Koats middleware with parametrized state.
+ * Koats middleware function with parametrized state.
  * If you call next() manually you MUST guarantee you update ctx.state according to return type
  * @typeParam State - type of incoming ctx.state
  * @typeParam Return - return type of middleware
@@ -66,17 +68,42 @@ export const MethodsArray = [
  * };
  * ```
  */
-export type Middleware<State = unknown, Return = unknown> = (
+export type MiddlewareFunction<State = unknown, Return = unknown> = (
   ctx: Koa.ParameterizedContext<State, KoaRouter.IRouterParamContext>,
   next: Koa.Next,
 ) => PromiseOr<Return>;
 
 /**
- * Type of Middleware or pure metadata object
+ * Meta-callback for routers and handlers
  */
-export type MiddlewareOrMeta<State = unknown, Return = unknown> =
-  | Middleware<State, Return>
-  | NonNullable<unknown>;
+export type MetaCallback = (
+  router: Router<string, MethodsType>,
+  handler?: RouteHandler<string, MethodsType, string>,
+) => void;
+
+/**
+ * Middleware metadata utility keys
+ */
+export enum MetaKeys {
+  metaCallback = 'metaCallback',
+  ignoreMiddleware = 'ignoreMiddleware',
+  ignoreMeta = 'ignoreMeta',
+}
+
+export type MiddlewareMetadata = {
+  [MetaKeys.metaCallback]?: MetaCallback;
+  [MetaKeys.ignoreMiddleware]?: boolean;
+  [MetaKeys.ignoreMeta]?: boolean;
+};
+
+/**
+ * Middleware with metadata
+ */
+export type Middleware<State = unknown, Return = unknown> = MiddlewareFunction<
+  State,
+  Return
+> &
+  MiddlewareMetadata;
 
 /**
  * Converts Koats middleware to default koa middleware
@@ -90,13 +117,3 @@ export function toKoaMiddleware(mw: Middleware): KoaRouter.IMiddleware {
     return next();
   };
 }
-
-/**
- * Middleware metadata utility keys
- */
-export const MetaKeys = {
-  metaOnly: 'meta-only',
-  ignoreMeta: 'ignore-meta',
-};
-
-export const MetaKeyValues = _.values(MetaKeys);

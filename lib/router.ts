@@ -4,8 +4,6 @@ import {
   MethodsType,
   Rewrite,
   toKoaMiddleware,
-  MetaKeys,
-  MiddlewareOrMeta,
   MethodsArray,
 } from './core';
 import { createRouteHandler, RouteHandler } from './route-handler';
@@ -71,7 +69,7 @@ export type IRouterMethodFunction<
   >(
     path: Path,
     name: string,
-    mw: MiddlewareOrMeta<NewState, Return>,
+    mw: Middleware<NewState, Return>,
   ) => RouteHandler<
     `${Prefix}${Path}`,
     MethodName,
@@ -141,7 +139,7 @@ export type Router<
      * @param mw - middleware (with/or metadata)
      */
     use<NewState extends State, Return>(
-      mw: MiddlewareOrMeta<NewState, Return>,
+      mw: Middleware<NewState, Return>,
     ): Router<Prefix, Methods, Rewrite<State, Return>>;
   };
 
@@ -220,13 +218,11 @@ export function createRouter<
       ]),
     ),
 
-    use<Return, NewState>(mw: MiddlewareOrMeta<NewState, Return>) {
-      if (!Reflect.getMetadata(MetaKeys.ignoreMeta, mw)) {
-        Reflect.getMetadataKeys(mw).forEach((key) =>
-          Reflect.defineMetadata(key, Reflect.getMetadata(key, mw), this),
-        );
+    use<Return, NewState>(mw: Middleware<NewState, Return>) {
+      if (_.isFunction(mw.metaCallback) && !mw.ignoreMeta) {
+        mw.metaCallback(this.router, this);
       }
-      if (!Reflect.getMetadata(MetaKeys.metaOnly, mw) && _.isFunction(mw)) {
+      if (!mw.ignoreMiddleware && _.isFunction(mw)) {
         this.koaRouter.use(toKoaMiddleware(mw));
       }
 

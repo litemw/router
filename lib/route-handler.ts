@@ -1,12 +1,5 @@
 import { Router } from './router';
-import {
-  MethodsType,
-  Rewrite,
-  toKoaMiddleware,
-  MetaKeys,
-  MiddlewareOrMeta,
-  MetaKeyValues,
-} from './core';
+import { MethodsType, Rewrite, toKoaMiddleware, Middleware } from './core';
 import 'reflect-metadata';
 import * as _ from 'lodash-es';
 
@@ -50,7 +43,7 @@ export type RouteHandler<
    * @param mw - middleware or metadata
    */
   use<NewState extends State, Return>(
-    mw: MiddlewareOrMeta<NewState, Return>,
+    mw: Middleware<NewState, Return>,
   ): RouteHandler<
     Path,
     Method,
@@ -84,15 +77,11 @@ export function createRouteHandler<
     method,
     name,
     router,
-    use(mw: MiddlewareOrMeta) {
-      if (!Reflect.getMetadata(MetaKeys.ignoreMeta, mw)) {
-        Reflect.getMetadataKeys(mw)
-          .filter((key) => MetaKeyValues.includes(key))
-          .forEach((key) =>
-            Reflect.defineMetadata(key, Reflect.getMetadata(key, mw), this),
-          );
+    use(mw: Middleware) {
+      if (_.isFunction(mw.metaCallback) && !mw.ignoreMeta) {
+        mw.metaCallback(this.router, this);
       }
-      if (!Reflect.getMetadata(MetaKeys.metaOnly, mw) && _.isFunction(mw)) {
+      if (!mw.ignoreMiddleware && _.isFunction(mw)) {
         if (name) {
           this.router.koaRouter[method](name, path, toKoaMiddleware(mw));
         } else {
