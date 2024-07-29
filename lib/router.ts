@@ -134,6 +134,8 @@ export type Router<
       State
     >[];
 
+    metadata?: any;
+
     /**
      * Adds middleware or metadata to chain (will be called before route handlers)
      * @param mw - middleware (with/or metadata)

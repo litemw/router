@@ -38,6 +38,8 @@ export type RouteHandler<
    */
   readonly name?: string;
 
+  metadata?: any;
+
   /**
    * Add middleware (with/or metadata) to chain
    * @param mw - middleware or metadata
