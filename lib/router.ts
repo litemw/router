@@ -21,7 +21,7 @@ export type IRouterMethodFunction<
   State = unknown,
 > = {
   /**
-   * Creates route handler
+   * Creates route handler with path
    * @param path - endpoint path
    * @return chainable route handler
    */
@@ -36,7 +36,7 @@ export type IRouterMethodFunction<
   >;
 } & {
   /**
-   * Creates route handler
+   * Creates route handler with path and name
    * @param path - endpoint path
    * @param name - endpoint name
    * @return chainable route handler
@@ -53,7 +53,7 @@ export type IRouterMethodFunction<
   >;
 } & {
   /**
-   * Creates route handler
+   * Creates route handler with path, name and middleware
    * @param path - endpoint path
    * @param name - endpoint name
    * @param mw - optional initial middleware (it can be only one middleware without next chain)
@@ -83,7 +83,7 @@ export type IRouterMethodFunction<
 };
 
 /**
- * Koats router options with generic prefix and methods
+ * Router options with generic prefix and methods
  */
 export type RouterOptions<
   Prefix extends string = '',
@@ -94,7 +94,7 @@ export type RouterOptions<
 };
 
 /**
- * Default koa router functions for delegating it to koats router
+ * Default koa router functions for delegating it to our router
  */
 export type IBaseRouter = Pick<
   KoaRouter,
@@ -102,7 +102,7 @@ export type IBaseRouter = Pick<
 >;
 
 /**
- * Koats router
+ * Router
  * @typeParam Prefix - router path prefix
  * @typeParam Methods - allowed methods
  * @typeParam State - type of ctx.state
@@ -134,6 +134,11 @@ export type Router<
       State
     >[];
 
+    /**
+     * Registred routers
+     */
+    readonly routers: Router<string, MethodsType>[];
+
     metadata?: any;
 
     /**
@@ -143,10 +148,26 @@ export type Router<
     use<NewState extends State, Return>(
       mw: Middleware<NewState, Return>,
     ): Router<Prefix, Methods, Rewrite<State, Return>>;
+
+    /**
+     * Use nested router
+     * @param router - other router
+     */
+    use(router: Router<string, MethodsType>): Router<Prefix, Methods, State>;
+
+    /**
+     * Use nested router
+     * @param path - mount path
+     * @param router - other router
+     */
+    use(
+      path: string,
+      router: Router<string, MethodsType>,
+    ): Router<Prefix, Methods, State>;
   };
 
 /**
- * Create koats router
+ * Create router
  * @typeParam Prefix - router prefix
  * @typeParam Method - allowed methods
  * @param opts - router options
@@ -204,6 +225,7 @@ export function createRouter<
     },
 
     routeHandlers: [],
+    routers: [],
 
     ..._.fromPairs(
       (opts?.methods ?? MethodsArray).map((method: MethodsType) => [
@@ -220,12 +242,26 @@ export function createRouter<
       ]),
     ),
 
-    use<Return, NewState>(mw: Middleware<NewState, Return>) {
-      if (_.isFunction(mw.metaCallback) && !mw.ignoreMeta) {
-        mw.metaCallback(this.router, this);
-      }
-      if (!mw.ignoreMiddleware && _.isFunction(mw)) {
-        this.koaRouter.use(toKoaMiddleware(mw));
+    use<Return, NewState>(
+      mwOrPathOrRouter:
+        | Middleware<NewState, Return>
+        | string
+        | Router<any, any>,
+      router?: Router<any, any>,
+    ) {
+      if (_.isString(mwOrPathOrRouter)) {
+        this.koaRouter.use(mwOrPathOrRouter, router?.routes());
+      } else if (_.isFunction(mwOrPathOrRouter)) {
+        const mw = mwOrPathOrRouter;
+        if (_.isFunction(mw.metaCallback) && !mw.ignoreMeta) {
+          mw.metaCallback(this.router, this);
+        }
+        if (!mw.ignoreMiddleware && _.isFunction(mw)) {
+          this.koaRouter.use(toKoaMiddleware(mw));
+        }
+      } else {
+        this.routers.push(mwOrPathOrRouter);
+        this.koaRouter.use(mwOrPathOrRouter.routes());
       }
 
       return this;
