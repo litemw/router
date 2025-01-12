@@ -1,47 +1,42 @@
 {
-  "name": "@koa-ts/router",
-  "version": "0.0.3",
+  "name": "@litemw/router",
+  "version": "0.0.4",
   "author": "VladDotH",
   "license": "MIT",
   "description": "Type-safe middlewares for koa router",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/koa-ts/router.git"
+    "url": "git+https://github.com/litemw/router.git"
   },
   "bugs": {
-    "url": "https://github.com/koa-ts/router/issues"
+    "url": "https://github.com/litemw/router/issues"
   },
-  "homepage": "https://github.com/koa-ts/router#readme",
+  "homepage": "https://github.com/litemw/router#readme",
   "scripts": {
-    "bun-dev": "bun --hot dev/app.ts",
-    "ts-dev": "tsc --watch --noEmit --preserveWatchOutput",
-    "dev": "npm-run-all --parallel ts-dev bun-dev",
-    "build:js": "bun build --target=node ./lib/index.ts --outfile=dist/index.js",
-    "build:dts": "tsc --emitDeclarationOnly --project tsconfig.build.json",
-    "build": "bun run build:js && bun run build:dts",
+    "build": "tsc --build tsconfig.build.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo"
   },
   "dependencies": {
     "koa": "^2.15.3",
     "koa-router": "^12.0.1",
     "lodash-es": "^4.17.21",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
+    "@types/bun": "^1.1.16",
     "@types/koa": "^2.13.8",
     "@types/koa-router": "^7.4.8",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "@typescript-eslint/eslint-plugin": "^5.59.11",
-    "@typescript-eslint/parser": "^5.59.11",
     "prettier": "^2.8.8",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^29.1.0",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

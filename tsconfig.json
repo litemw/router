@@ -21,6 +21,7 @@
     "strictBindCallApply": true,
   },
   "include": [
-    "lib/**/*.ts"
+    "lib/**/*.ts",
+    "tests/**/*.ts"
   ]
 }

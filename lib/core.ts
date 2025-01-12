@@ -56,7 +56,7 @@ export const MethodsArray = [
 ];
 
 /**
- * Koats middleware function with parametrized state.
+ * Middleware function with parametrized state.
  * If you call next() manually you MUST guarantee you update ctx.state according to return type
  * @typeParam State - type of incoming ctx.state
  * @typeParam Return - return type of middleware
@@ -106,8 +106,8 @@ export type Middleware<State = unknown, Return = unknown> = MiddlewareFunction<
   MiddlewareMetadata;
 
 /**
- * Converts Koats middleware to default koa middleware
- * @param mw - koats middleware
+ * Converts our middleware to default koa middleware
+ * @param mw - middleware
  */
 export function toKoaMiddleware(mw: Middleware): KoaRouter.IMiddleware {
   return async (ctx, next) => {
