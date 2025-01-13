@@ -1,5 +1,11 @@
 import { Router } from './router';
-import { MethodsType, Rewrite, toKoaMiddleware, Middleware } from './core';
+import {
+  MethodsType,
+  Rewrite,
+  toKoaMiddleware,
+  Middleware,
+  MetaKeys,
+} from './core';
 import 'reflect-metadata';
 import * as _ from 'lodash-es';
 
@@ -12,11 +18,11 @@ import * as _ from 'lodash-es';
  * @typeParam RouterState - type of parents router state
  */
 export type RouteHandler<
-  Path extends string,
-  Method extends MethodsType,
-  RouterPrefix extends string,
-  State = unknown,
-  RouterState = unknown,
+  Path extends string = string,
+  Method extends MethodsType = MethodsType,
+  RouterPrefix extends string = string,
+  State = {},
+  RouterState = {},
 > = {
   /**
    * Parent router
@@ -80,10 +86,10 @@ export function createRouteHandler<
     name,
     router,
     use(mw: Middleware) {
-      if (_.isFunction(mw.metaCallback) && !mw.ignoreMeta) {
-        mw.metaCallback(this.router, this);
+      if (_.isFunction(mw[MetaKeys.metaCallback])) {
+        mw[MetaKeys.metaCallback](this.router, this);
       }
-      if (!mw.ignoreMiddleware && _.isFunction(mw)) {
+      if (!mw[MetaKeys.ignoreMiddleware] && _.isFunction(mw)) {
         if (name) {
           this.router.koaRouter[method](name, path, toKoaMiddleware(mw));
         } else {
