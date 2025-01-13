@@ -76,10 +76,7 @@ export type MiddlewareFunction<State = unknown, Return = unknown> = (
 /**
  * Meta-callback for routers and handlers
  */
-export type MetaCallback = (
-  router: Router<string, MethodsType>,
-  handler?: RouteHandler<string, MethodsType, string>,
-) => void;
+export type MetaCallback = (router: Router, handler?: RouteHandler) => void;
 
 /**
  * Middleware metadata utility keys
@@ -87,13 +84,11 @@ export type MetaCallback = (
 export enum MetaKeys {
   metaCallback = 'metaCallback',
   ignoreMiddleware = 'ignoreMiddleware',
-  ignoreMeta = 'ignoreMeta',
 }
 
 export type MiddlewareMetadata = {
   [MetaKeys.metaCallback]?: MetaCallback;
   [MetaKeys.ignoreMiddleware]?: boolean;
-  [MetaKeys.ignoreMeta]?: boolean;
 };
 
 /**
