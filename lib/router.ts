@@ -5,6 +5,7 @@ import {
   Rewrite,
   toKoaMiddleware,
   MethodsArray,
+  MetaKeys,
 } from './core';
 import { createRouteHandler, RouteHandler } from './route-handler';
 import * as _ from 'lodash-es';
@@ -86,7 +87,7 @@ export type IRouterMethodFunction<
  * Router options with generic prefix and methods
  */
 export type RouterOptions<
-  Prefix extends string = '',
+  Prefix extends string = string,
   Methods extends MethodsType = MethodsType,
 > = Omit<KoaRouter.IRouterOptions, 'prefix' | 'methods'> & {
   prefix?: Prefix;
@@ -108,9 +109,9 @@ export type IBaseRouter = Pick<
  * @typeParam State - type of ctx.state
  */
 export type Router<
-  Prefix extends string,
-  Methods extends MethodsType,
-  State = unknown,
+  Prefix extends string = string,
+  Methods extends MethodsType = MethodsType,
+  State = {},
 > = IBaseRouter &
   IRouterMethodFunction<Prefix, Methods, State> & {
     /**
@@ -137,7 +138,7 @@ export type Router<
     /**
      * Registred routers
      */
-    readonly routers: Router<string, MethodsType>[];
+    readonly routers: [string | null, Router][];
 
     metadata?: any;
 
@@ -153,50 +154,65 @@ export type Router<
      * Use nested router
      * @param router - other router
      */
-    use(router: Router<string, MethodsType>): Router<Prefix, Methods, State>;
+    use(router: Router): Router<Prefix, Methods, State>;
 
     /**
      * Use nested router
      * @param path - mount path
      * @param router - other router
      */
-    use(
-      path: string,
-      router: Router<string, MethodsType>,
-    ): Router<Prefix, Methods, State>;
+    use(path: string, router: Router): Router<Prefix, Methods, State>;
   };
 
 /**
- * Create router
- * @typeParam Prefix - router prefix
- * @typeParam Method - allowed methods
+ * Creates a router without prefix
+ * */
+export function createRouter(): Router<'', MethodsType, { router: Router<''> }>;
+
+/**
+ * Creates a router with options
  * @param opts - router options
- * @example
- * ```
- * const apiRouter = createRouter({ prefix: '/api', methods: ['get', 'post'] })
- *    .use((ctx) => ({ someDataFromRouter: 123 }));
- *
- * apiRouter.get('/get', (ctx) => {
- *    ctx.body = ctx.state.someDataFromRouter; // available data from router middlewares
- * });
- *
- * apiRouter.get('/post', (ctx) => {
- *    return { someDateFromRoute: 'string' };
- * })
- *  .use((ctx) => {
- *      ctx.body = ctx.state.someDateFromRoute; // available data from current route middlewares
- *  });
- *
- * apiRouter.delete(...) // will not compile, delete is not allowed method
- * ```
- */
+ * */
 export function createRouter<
   const Prefix extends string,
   const Method extends MethodsType,
 >(
-  opts?: RouterOptions<Prefix, Method>,
-): Router<Prefix, Method, { router: Router<Prefix, Method> }> {
-  const koaRouter = new KoaRouter(opts);
+  opts: RouterOptions<Prefix, Method>,
+): Router<Prefix, Method, { router: Router<Prefix, Method> }>;
+
+/**
+ * Creates a router with prefix
+ * @param prefix - router prefix
+ * */
+export function createRouter<const Prefix extends string>(
+  prefix: Prefix,
+): Router<Prefix, MethodsType, { router: Router<Prefix> }>;
+
+/**
+ * Creates a router with prefix and options
+ * @param prefix - router prefix
+ * @param opts - router options
+ * */
+export function createRouter<
+  const Prefix extends string,
+  const Method extends MethodsType,
+>(
+  prefix: Prefix,
+  opts: Omit<RouterOptions<Prefix, Method>, 'prefix'>,
+): Router<Prefix, Method, { router: Router<Prefix, Method> }>;
+
+/**
+ * Creates a router with prefix and/or options (same as koa router options)
+ */
+export function createRouter(
+  optsOrPrefix?: string | RouterOptions,
+  opts?: RouterOptions,
+): any {
+  let options = opts ?? {};
+  if (_.isString(optsOrPrefix)) options.prefix = optsOrPrefix;
+  else if (!_.isNil(optsOrPrefix)) options = optsOrPrefix;
+
+  const koaRouter = new KoaRouter(options);
   const router = {
     koaRouter,
     get opts() {
@@ -228,7 +244,7 @@ export function createRouter<
     routers: [],
 
     ..._.fromPairs(
-      (opts?.methods ?? MethodsArray).map((method: MethodsType) => [
+      (options?.methods ?? MethodsArray).map((method: MethodsType) => [
         method,
         function (path: string, name?: string, mw?: Middleware) {
           const route = createRouteHandler(this, method, path, name);
@@ -243,25 +259,23 @@ export function createRouter<
     ),
 
     use<Return, NewState>(
-      mwOrPathOrRouter:
-        | Middleware<NewState, Return>
-        | string
-        | Router<any, any>,
-      router?: Router<any, any>,
+      mwOrPathOrRouter: Middleware<NewState, Return> | string | Router,
+      router?: Router,
     ) {
-      if (_.isString(mwOrPathOrRouter)) {
-        this.koaRouter.use(mwOrPathOrRouter, router?.routes());
-      } else if (_.isFunction(mwOrPathOrRouter)) {
+      if (_.isFunction(mwOrPathOrRouter)) {
         const mw = mwOrPathOrRouter;
-        if (_.isFunction(mw.metaCallback) && !mw.ignoreMeta) {
-          mw.metaCallback(this.router, this);
+        if (_.isFunction(mw[MetaKeys.metaCallback])) {
+          mw.metaCallback(this);
         }
-        if (!mw.ignoreMiddleware && _.isFunction(mw)) {
+        if (!mw[MetaKeys.ignoreMiddleware] && _.isFunction(mw)) {
           this.koaRouter.use(toKoaMiddleware(mw));
         }
+      } else if (_.isString(mwOrPathOrRouter)) {
+        this.koaRouter.use(mwOrPathOrRouter, router?.routes());
+        this.routers.push([mwOrPathOrRouter, router]);
       } else {
-        this.routers.push(mwOrPathOrRouter);
         this.koaRouter.use(mwOrPathOrRouter.routes());
+        this.routers.push([null, mwOrPathOrRouter]);
       }
 
       return this;
@@ -272,5 +286,5 @@ export function createRouter<
     router,
   }));
 
-  return router as unknown as Router<Prefix, Method>;
+  return router as unknown as Router<any, any, any>;
 }
