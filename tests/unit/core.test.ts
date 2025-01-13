@@ -1,5 +1,5 @@
 import { expect, test, mock, describe } from 'bun:test';
-import { Middleware, toKoaMiddleware } from '../lib';
+import { Middleware, toKoaMiddleware } from '../../lib';
 import * as tsafe from 'tsafe';
 import Koa from 'koa';
 import KoaRouter from 'koa-router';

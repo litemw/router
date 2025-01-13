@@ -7,7 +7,7 @@ import {
   Middleware,
   RouteHandler,
   Router,
-} from '../lib';
+} from '../../lib';
 import * as tsafe from 'tsafe';
 import { isString } from 'lodash-es';
 
