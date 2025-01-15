@@ -20,8 +20,10 @@ describe('Route handler', () => {
         get(target: any, prop: string, receiver: any): any {
           if (
             isString(prop) &&
-            tsafe.is<MethodsType>(prop) &&
-            MethodsArray.includes(prop)
+            tsafe.typeGuard<MethodsType>(
+              prop,
+              MethodsArray.includes(prop as any),
+            )
           ) {
             return (...args: any[]) => methodsMock(prop, ...args);
           }
