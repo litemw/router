@@ -53,7 +53,7 @@ export const MethodsArray = [
   'link',
   'unlink',
   'all',
-];
+] as const satisfies string[];
 
 /**
  * Middleware function with parametrized state.
