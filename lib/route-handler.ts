@@ -6,7 +6,6 @@ import {
   Middleware,
   MetaKeys,
 } from './core';
-import 'reflect-metadata';
 import * as _ from 'lodash-es';
 
 /**
