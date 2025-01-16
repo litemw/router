@@ -17,9 +17,21 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+
+      - name: Cache
+        id: bun-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+
       - name: Install bun
+        if: steps.bun-cache.outputs.cache-hit != 'true'
         uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
+        if: steps.bun-cache.outputs.cache-hit != 'true'
         run: bun install
+
       - name: Run linters
         run: bun run lint
