@@ -56,7 +56,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        if: steps.bun-cache.outputs.cache-hit != 'true'
         run: bun install
 
       - name: Run tests
