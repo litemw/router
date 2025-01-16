@@ -15,7 +15,9 @@
   "homepage": "https://github.com/litemw/router#readme",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "postbuild": "rimraf tsconfig.types.tsbuildinfo"
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo",
+    "lint": "bun run eslint lib/**/*.ts",
+    "lint:fix": "bun run lint --fix"
   },
   "dependencies": {
     "@types/supertest": "^6.0.2",
