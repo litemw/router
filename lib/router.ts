@@ -265,7 +265,7 @@ export function createRouter(
       if (_.isFunction(mwOrPathOrRouter)) {
         const mw = mwOrPathOrRouter;
         if (_.isFunction(mw[MetaKeys.metaCallback])) {
-          mw.metaCallback(this);
+          mw[MetaKeys.metaCallback](this);
         }
         if (!mw[MetaKeys.ignoreMiddleware] && _.isFunction(mw)) {
           this.koaRouter.use(toKoaMiddleware(mw));
@@ -286,5 +286,5 @@ export function createRouter(
     router,
   }));
 
-  return router as unknown as Router<any, any, any>;
+  return router;
 }
