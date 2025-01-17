@@ -69,7 +69,10 @@ export const MethodsArray = [
  * ```
  */
 export type MiddlewareFunction<State = unknown, Return = unknown> = (
-  ctx: Koa.ParameterizedContext<State, KoaRouter.IRouterParamContext>,
+  ctx: Koa.ParameterizedContext<
+    Koa.DefaultState & State,
+    Koa.DefaultContext & KoaRouter.IRouterParamContext
+  >,
   next: Koa.Next,
 ) => PromiseOr<Return>;
 
