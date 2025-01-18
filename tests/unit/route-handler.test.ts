@@ -44,7 +44,7 @@ describe('Route handler', () => {
     expect(handler.name).toEqual(name);
     expect(handler.path).toEqual(path);
     expect(handler.method).toEqual(method);
-    expect(handler.metadata).toBeUndefined();
+    expect(handler.metadata).toEqual({});
   });
 
   test.each(MethodsArray)('Method %s registration', (method: MethodsType) => {
