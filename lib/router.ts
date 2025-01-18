@@ -140,7 +140,7 @@ export type Router<
      */
     readonly routers: [string | null, Router][];
 
-    metadata?: any;
+    metadata: Record<any, any>;
 
     /**
      * Adds middleware or metadata to chain (will be called before route handlers)
@@ -242,6 +242,7 @@ export function createRouter(
 
     routeHandlers: [],
     routers: [],
+    metadata: {},
 
     ..._.fromPairs(
       (options?.methods ?? MethodsArray).map((method: MethodsType) => [

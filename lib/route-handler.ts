@@ -43,7 +43,7 @@ export type RouteHandler<
    */
   readonly name?: string;
 
-  metadata?: any;
+  metadata: Record<any, any>;
 
   /**
    * Add middleware (with/or metadata) to chain
@@ -84,6 +84,7 @@ export function createRouteHandler<
     method,
     name,
     router,
+    metadata: {},
     use(mw: Middleware) {
       if (_.isFunction(mw[MetaKeys.metaCallback])) {
         mw[MetaKeys.metaCallback](this.router, this);
