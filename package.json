@@ -1,6 +1,6 @@
 {
   "name": "@litemw/router",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "VladDotH",
   "license": "MIT",
   "description": "Type-safe middlewares for koa router",
@@ -42,6 +42,18 @@
     "supertest": "^7.0.0",
     "@types/supertest": "^6.0.2",
     "tsafe": "^1.8.5"
+  },
+  "peerDependencies": {
+    "koa": "^2",
+    "koa-router": "^12"
+  },
+  "peerDependenciesMeta": {
+    "koa": {
+      "optional": false
+    },
+    "koa-router": {
+      "optional": false
+    }
   },
   "files": [
     "dist/*.js",
