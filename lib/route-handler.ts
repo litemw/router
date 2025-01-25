@@ -6,7 +6,7 @@ import {
   Middleware,
   MetaKeys,
 } from './core';
-import * as _ from 'lodash-es';
+import { isFunction } from 'lodash-es';
 
 /**
  * Type of route handler, it can chain middlewares with `use` method
@@ -86,10 +86,10 @@ export function createRouteHandler<
     router,
     metadata: {},
     use(mw: Middleware) {
-      if (_.isFunction(mw[MetaKeys.metaCallback])) {
+      if (isFunction(mw[MetaKeys.metaCallback])) {
         mw[MetaKeys.metaCallback](this.router, this);
       }
-      if (!mw[MetaKeys.ignoreMiddleware] && _.isFunction(mw)) {
+      if (!mw[MetaKeys.ignoreMiddleware] && isFunction(mw)) {
         if (name) {
           this.router.koaRouter[method](name, path, toKoaMiddleware(mw));
         } else {

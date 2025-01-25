@@ -1,8 +1,8 @@
 import Koa from 'koa';
 import KoaRouter from 'koa-router';
-import * as _ from 'lodash-es';
 import { RouteHandler } from './route-handler';
 import { Router } from './router';
+import { once } from 'lodash-es';
 
 /**
  * Merge object types rewriting properties of first one
@@ -109,7 +109,7 @@ export type Middleware<State = unknown, Return = unknown> = MiddlewareFunction<
  */
 export function toKoaMiddleware(mw: Middleware): KoaRouter.IMiddleware {
   return async (ctx, next) => {
-    next = _.once(next);
+    next = once(next);
     const res = await mw(ctx, next);
     Object.assign(ctx.state, res);
     return next();

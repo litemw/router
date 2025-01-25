@@ -8,7 +8,7 @@ import {
   MetaKeys,
 } from './core';
 import { createRouteHandler, RouteHandler } from './route-handler';
-import * as _ from 'lodash-es';
+import { fromPairs, isFunction, isNil, isString } from 'lodash-es';
 
 /**
  * Interface for functions that create route handlers in router (get, put, post, delete, etc.)
@@ -209,8 +209,8 @@ export function createRouter(
   opts?: RouterOptions,
 ): any {
   let options = opts ?? {};
-  if (_.isString(optsOrPrefix)) options.prefix = optsOrPrefix;
-  else if (!_.isNil(optsOrPrefix)) options = optsOrPrefix;
+  if (isString(optsOrPrefix)) options.prefix = optsOrPrefix;
+  else if (!isNil(optsOrPrefix)) options = optsOrPrefix;
 
   const koaRouter = new KoaRouter(options);
   const router = {
@@ -244,7 +244,7 @@ export function createRouter(
     routers: [],
     metadata: {},
 
-    ..._.fromPairs(
+    ...fromPairs(
       (options?.methods ?? MethodsArray).map((method: MethodsType) => [
         method,
         function (path: string, name?: string, mw?: Middleware) {
@@ -263,15 +263,15 @@ export function createRouter(
       mwOrPathOrRouter: Middleware<NewState, Return> | string | Router,
       router?: Router,
     ) {
-      if (_.isFunction(mwOrPathOrRouter)) {
+      if (isFunction(mwOrPathOrRouter)) {
         const mw = mwOrPathOrRouter;
-        if (_.isFunction(mw[MetaKeys.metaCallback])) {
+        if (isFunction(mw[MetaKeys.metaCallback])) {
           mw[MetaKeys.metaCallback](this);
         }
-        if (!mw[MetaKeys.ignoreMiddleware] && _.isFunction(mw)) {
+        if (!mw[MetaKeys.ignoreMiddleware] && isFunction(mw)) {
           this.koaRouter.use(toKoaMiddleware(mw));
         }
-      } else if (_.isString(mwOrPathOrRouter)) {
+      } else if (isString(mwOrPathOrRouter)) {
         this.koaRouter.use(mwOrPathOrRouter, router?.routes());
         this.routers.push([mwOrPathOrRouter, router]);
       } else {
