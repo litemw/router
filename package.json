@@ -1,6 +1,6 @@
 {
   "name": "@litemw/router",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": "VladDotH",
   "license": "MIT",
   "description": "Type-safe middlewares for koa router",
