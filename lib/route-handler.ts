@@ -89,7 +89,7 @@ export function createRouteHandler<
       if (isFunction(mw[MetaKeys.metaCallback])) {
         mw[MetaKeys.metaCallback](this.router, this);
       }
-      if (!mw[MetaKeys.ignoreMiddleware] && isFunction(mw)) {
+      if (!mw[MetaKeys.ignoreMiddleware]) {
         if (name) {
           this.router.koaRouter[method](name, path, toKoaMiddleware(mw));
         } else {
