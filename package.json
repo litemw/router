@@ -1,10 +1,11 @@
 {
   "name": "@litemw/router",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "VladDotH",
   "license": "MIT",
   "description": "Type-safe middlewares for koa router",
   "private": false,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/litemw/router.git"
