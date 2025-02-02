@@ -1,8 +1,7 @@
 # litemw/router 
 
-![lint](https://github.com/litemw/router/actions/workflows/lint.yml/badge.svg)
 ![tests](https://github.com/litemw/router/actions/workflows/tests.yml/badge.svg)
-![publish](https://github.com/litemw/router/actions/workflows/publish.yml/badge.svg)
+[![npm](https://img.shields.io/npm/v/@litemw/router.svg)](https://npmjs.com/package/@litemw/router)
 
 
 ## Getting started  
