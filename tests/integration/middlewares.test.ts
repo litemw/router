@@ -2,7 +2,7 @@ import { describe, expect, mock, test } from 'bun:test';
 import Koa from 'koa';
 import { createRouter } from '../../lib';
 import request from 'supertest';
-import { clone } from 'lodash-es';
+import { clone } from 'lodash';
 
 const port = 8081;
 

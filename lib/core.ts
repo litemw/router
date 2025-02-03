@@ -2,7 +2,7 @@ import Koa from 'koa';
 import KoaRouter from 'koa-router';
 import { RouteHandler } from './route-handler';
 import { Router } from './router';
-import { once } from 'lodash-es';
+import once from 'lodash/once.js';
 
 /**
  * Merge object types rewriting properties of first one
@@ -55,6 +55,8 @@ export const MethodsArray = [
   'all',
 ] as const satisfies string[];
 
+export type DefaultState = {};
+
 /**
  * Middleware function with parametrized state.
  * If you call next() manually you MUST guarantee you update ctx.state according to return type
@@ -70,7 +72,7 @@ export const MethodsArray = [
  */
 export type MiddlewareFunction<State = unknown, Return = unknown> = (
   ctx: Koa.ParameterizedContext<
-    Koa.DefaultState & State,
+    State & DefaultState, // TODO common default state (Koa.DefaultState extending)
     Koa.DefaultContext & KoaRouter.IRouterParamContext
   >,
   next: Koa.Next,

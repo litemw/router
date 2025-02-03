@@ -8,7 +8,10 @@ import {
   MetaKeys,
 } from './core';
 import { createRouteHandler, RouteHandler } from './route-handler';
-import { fromPairs, isFunction, isNil, isString } from 'lodash-es';
+import fromPairs from 'lodash/fromPairs.js';
+import isFunction from 'lodash/isFunction.js';
+import isNil from 'lodash/isNil.js';
+import isString from 'lodash/isString.js';
 
 /**
  * Interface for functions that create route handlers in router (get, put, post, delete, etc.)

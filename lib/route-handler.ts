@@ -6,7 +6,7 @@ import {
   Middleware,
   MetaKeys,
 } from './core';
-import { isFunction } from 'lodash-es';
+import isFunction from 'lodash/isFunction.js';
 
 /**
  * Type of route handler, it can chain middlewares with `use` method

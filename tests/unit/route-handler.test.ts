@@ -9,7 +9,7 @@ import {
   Router,
 } from '../../lib';
 import * as tsafe from 'tsafe';
-import { isString } from 'lodash-es';
+import { isString } from 'lodash';
 
 describe('Route handler', () => {
   const methodsMock = mock((...args: unknown[]) => void 0);
