@@ -55,7 +55,8 @@ export const MethodsArray = [
   'all',
 ] as const satisfies string[];
 
-export type DefaultState = {};
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface DefaultState {}
 
 /**
  * Middleware function with parametrized state.
@@ -72,7 +73,7 @@ export type DefaultState = {};
  */
 export type MiddlewareFunction<State = unknown, Return = unknown> = (
   ctx: Koa.ParameterizedContext<
-    State & DefaultState, // TODO common default state (Koa.DefaultState extending)
+    State & DefaultState,
     Koa.DefaultContext & KoaRouter.IRouterParamContext
   >,
   next: Koa.Next,
