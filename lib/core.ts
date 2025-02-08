@@ -58,6 +58,10 @@ export const MethodsArray = [
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DefaultState {}
 
+export type NextObject = Koa.Next & {
+  cancel: () => void;
+};
+
 /**
  * Middleware function with parametrized state.
  * If you call next() manually you MUST guarantee you update ctx.state according to return type
@@ -76,7 +80,7 @@ export type MiddlewareFunction<State = unknown, Return = unknown> = (
     State & DefaultState,
     Koa.DefaultContext & KoaRouter.IRouterParamContext
   >,
-  next: Koa.Next,
+  next: NextObject,
 ) => PromiseOr<Return>;
 
 /**
@@ -111,10 +115,20 @@ export type Middleware<State = unknown, Return = unknown> = MiddlewareFunction<
  * @param mw - middleware
  */
 export function toKoaMiddleware(mw: Middleware): KoaRouter.IMiddleware {
-  return async (ctx, next) => {
-    next = once(next);
+  return async (ctx, koaNext: Koa.Next) => {
+    const next = once(koaNext) as NextObject;
+
+    let callNext = () => {
+      return next();
+    };
+
+    next.cancel = () => {
+      callNext = () => Promise.resolve();
+    };
+
     const res = await mw(ctx, next);
     Object.assign(ctx.state, res);
-    return next();
+
+    return callNext();
   };
 }

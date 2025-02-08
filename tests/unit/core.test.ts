@@ -29,11 +29,41 @@ describe('toKoaMiddleware function', async () => {
 
   test('State has changed properly', () => {
     tsafe.assert(tsafe.is<{ test: string }>(ctx.state));
-    expect(ctx.state).toHaveProperty('test');
-    expect(ctx.state.test).toEqual('string');
+    expect(ctx.state).toHaveProperty('test', 'string');
   });
 
   test('Next has called once', () => {
     expect(next).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Next cancelling', async () => {
+  const basemw: Middleware = async (ctx, next) => {
+    next.cancel();
+    return { test: 'string' };
+  };
+  const mw = toKoaMiddleware(basemw);
+
+  test('Returns a function', () => {
+    expect(mw).toBeFunction();
+  });
+
+  const ctx = { state: {} };
+  const next = mock(() => void 0);
+
+  tsafe.assert(
+    tsafe.is<Koa.ParameterizedContext<{}, KoaRouter.IRouterParamContext>>(ctx),
+  );
+  tsafe.assert(tsafe.is<Koa.Next>(next));
+
+  await mw(ctx, next);
+
+  test('State has changed properly', () => {
+    tsafe.assert(tsafe.is<{ test: string }>(ctx.state));
+    expect(ctx.state).toHaveProperty('test', 'string');
+  });
+
+  test('Next has node been called', () => {
+    expect(next).toHaveBeenCalledTimes(0);
   });
 });
