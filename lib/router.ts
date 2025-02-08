@@ -1,4 +1,4 @@
-import KoaRouter from 'koa-router';
+import KoaRouter from '@koa/router';
 import {
   Middleware,
   MethodsType,
@@ -92,7 +92,7 @@ export type IRouterMethodFunction<
 export type RouterOptions<
   Prefix extends string = string,
   Methods extends MethodsType = MethodsType,
-> = Omit<KoaRouter.IRouterOptions, 'prefix' | 'methods'> & {
+> = Omit<KoaRouter.RouterOptions, 'prefix' | 'methods'> & {
   prefix?: Prefix;
   methods?: Methods[];
 };
@@ -223,23 +223,23 @@ export function createRouter(
     },
 
     allowedMethods(
-      options?: KoaRouter.IRouterAllowedMethodsOptions,
-    ): KoaRouter.IMiddleware {
+      options?: KoaRouter.RouterAllowedMethodsOptions,
+    ): KoaRouter.Middleware {
       return this.koaRouter.allowedMethods(options);
     },
-    match(path: string, method: string): KoaRouter.IRoutesMatch {
+    match(path: string, method: string): KoaRouter.RoutesMatch {
       return this.koaRouter.match(path, method);
     },
-    middleware(): KoaRouter.IMiddleware {
+    middleware(): KoaRouter.Middleware {
       return this.koaRouter.middleware();
     },
     route(name: string): any {
       return this.koaRouter.route(name);
     },
-    routes(): KoaRouter.IMiddleware<{}> {
+    routes(): KoaRouter.Middleware<{}> {
       return this.koaRouter.routes();
     },
-    url(name: string, params: any, options?: KoaRouter.IUrlOptionsQuery): any {
+    url(name: string, params: any, options?: KoaRouter.UrlOptionsQuery): any {
       return this.koaRouter.url(name, params, options);
     },
 

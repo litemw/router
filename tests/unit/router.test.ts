@@ -9,7 +9,7 @@ import {
   Router,
 } from '../../lib';
 import * as tsafe from 'tsafe';
-import KoaRouter from 'koa-router';
+import KoaRouter from '@koa/router';
 
 describe('Router', async () => {
   const koaRouterPropMock = mock((...args: unknown[]) => void 0);

@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import KoaRouter from 'koa-router';
+import KoaRouter from '@koa/router';
 import { RouteHandler } from './route-handler';
 import { Router } from './router';
 import once from 'lodash/once.js';
@@ -78,7 +78,7 @@ export type NextObject = Koa.Next & {
 export type MiddlewareFunction<State = unknown, Return = unknown> = (
   ctx: Koa.ParameterizedContext<
     State & DefaultState,
-    Koa.DefaultContext & KoaRouter.IRouterParamContext
+    Koa.DefaultContext & KoaRouter.RouterParamContext
   >,
   next: NextObject,
 ) => PromiseOr<Return>;
@@ -114,7 +114,7 @@ export type Middleware<State = unknown, Return = unknown> = MiddlewareFunction<
  * Converts our middleware to default koa middleware
  * @param mw - middleware
  */
-export function toKoaMiddleware(mw: Middleware): KoaRouter.IMiddleware {
+export function toKoaMiddleware(mw: Middleware): KoaRouter.Middleware {
   return async (ctx, koaNext: Koa.Next) => {
     const next = once(koaNext) as NextObject;
 

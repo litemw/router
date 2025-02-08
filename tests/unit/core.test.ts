@@ -2,7 +2,7 @@ import { expect, test, mock, describe } from 'bun:test';
 import { Middleware, toKoaMiddleware } from '../../lib';
 import * as tsafe from 'tsafe';
 import Koa from 'koa';
-import KoaRouter from 'koa-router';
+import KoaRouter from '@koa/router';
 
 describe('toKoaMiddleware function', async () => {
   const basemw: Middleware = async (ctx, next) => {
@@ -21,7 +21,7 @@ describe('toKoaMiddleware function', async () => {
   const next = mock(() => void 0);
 
   tsafe.assert(
-    tsafe.is<Koa.ParameterizedContext<{}, KoaRouter.IRouterParamContext>>(ctx),
+    tsafe.is<Koa.ParameterizedContext<{}, KoaRouter.RouterParamContext>>(ctx),
   );
   tsafe.assert(tsafe.is<Koa.Next>(next));
 
@@ -52,7 +52,7 @@ describe('Next cancelling', async () => {
   const next = mock(() => void 0);
 
   tsafe.assert(
-    tsafe.is<Koa.ParameterizedContext<{}, KoaRouter.IRouterParamContext>>(ctx),
+    tsafe.is<Koa.ParameterizedContext<{}, KoaRouter.RouterParamContext>>(ctx),
   );
   tsafe.assert(tsafe.is<Koa.Next>(next));
 
